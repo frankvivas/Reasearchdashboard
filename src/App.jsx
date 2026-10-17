@@ -57,6 +57,17 @@ export default function App() {
   const [showAll, setShowAll] = useState(false);
   const plantStatus = moisture < threshold ? "Needs water" : moisture > 78 ? "Too wet" : "Healthy";
   const visibleLogs = showAll ? logs : logs.slice(0, 4);
+  const historyLogs = pumpOn && pumpMode === "automatic"
+    ? [{
+        id: "active-automatic-cycle",
+        type: "water",
+        title: "Automatic watering in progress",
+        detail: `Pump running for ${pumpSeconds} second${pumpSeconds === 1 ? "" : "s"}`,
+        water: `${Math.round(pumpSeconds * 9.1)} mL used`,
+        time: "Now",
+        date: "Simulation",
+      }, ...visibleLogs]
+    : visibleLogs;
   const thresholdGap = Math.round(Math.abs(moisture - threshold));
 
   function finishWatering(duration, mode) {
@@ -168,7 +179,7 @@ export default function App() {
 
           <section className="panel activity-panel" id="activity">
             <div className="panel-heading"><div><p className="eyebrow">SYSTEM HISTORY</p><h2>Recent activity</h2></div><button className="text-button" onClick={() => setShowAll((current) => !current)}>{showAll ? "Show less" : "View all activity"}</button></div>
-            <div className="activity-table" role="table" aria-label="Recent plant activity"><div className="activity-head" role="row"><span>Activity</span><span>Duration / result</span><span>Est. water used</span><span>Time</span></div>{visibleLogs.map((log) => <div className="activity-row" role="row" key={log.id}><div className={`activity-icon ${log.type}`}><span>{log.type === "water" ? <Droplets size={18} /> : <Activity size={18} />}</span><p><strong>{log.title}</strong><small>{log.date}</small></p></div><span>{log.detail}</span><strong>{log.water}</strong><time>{log.time}</time></div>)}</div>
+            <div className="activity-table" role="table" aria-label="Recent plant activity"><div className="activity-head" role="row"><span>Activity</span><span>Duration / result</span><span>Est. water used</span><span>Time</span></div>{historyLogs.map((log) => <div className="activity-row" role="row" key={log.id}><div className={`activity-icon ${log.type}`}><span>{log.type === "water" ? <Droplets size={18} /> : <Activity size={18} />}</span><p><strong>{log.title}</strong><small>{log.date}</small></p></div><span>{log.detail}</span><strong>{log.water}</strong><time>{log.time}</time></div>)}</div>
           </section>
         </div>
       </main>
