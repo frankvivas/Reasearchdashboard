@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import {
-  Activity, Bell, ChevronDown, CircleGauge, Clock3, Cloud, Droplets,
+  Activity, ChevronDown, CircleGauge, Clock3, Cloud, Droplets,
   History, Leaf, Menu, MoreHorizontal, Power, Settings,
   SlidersHorizontal, Timer, Waves, X,
 } from "lucide-react";
@@ -49,6 +49,7 @@ export default function App() {
   const [moisture, setMoisture] = useState(64);
   const [threshold, setThreshold] = useState(45);
   const [pumpOn, setPumpOn] = useState(false);
+  const [pumpMode, setPumpMode] = useState(null);
   const [pumpSeconds, setPumpSeconds] = useState(0);
   const [waterToday, setWaterToday] = useState(319);
   const [lastWatered, setLastWatered] = useState("2:14 PM");
@@ -56,30 +57,56 @@ export default function App() {
   const [showAll, setShowAll] = useState(false);
   const plantStatus = moisture < threshold ? "Needs water" : moisture > 78 ? "Too wet" : "Healthy";
   const visibleLogs = showAll ? logs : logs.slice(0, 4);
+  const thresholdGap = Math.round(Math.abs(moisture - threshold));
+
+  function finishWatering(duration, mode) {
+    setPumpOn(false);
+    setPumpMode(null);
+    const now = new Date();
+    const completedAt = now.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+    const estimatedWater = Math.round(duration * 9.1);
+    setLastWatered(completedAt);
+    setLogs((current) => [{
+      id: Date.now(),
+      type: "water",
+      title: `${mode === "automatic" ? "Automatic" : "Manual"} watering completed`,
+      detail: `Pump ran for ${duration} second${duration === 1 ? "" : "s"}`,
+      water: `${estimatedWater} mL`,
+      time: completedAt,
+      date: "Today",
+    }, ...current]);
+  }
+
+  useEffect(() => {
+    if (moisture < threshold && !pumpOn) {
+      setPumpSeconds(0);
+      setPumpMode("automatic");
+      setPumpOn(true);
+    }
+  }, [moisture, threshold, pumpOn]);
 
   useEffect(() => {
     if (!pumpOn) return undefined;
-    const startedAt = Date.now();
     const timer = window.setInterval(() => {
-      const elapsed = Math.min(12, Math.floor((Date.now() - startedAt) / 1000));
-      setPumpSeconds(elapsed);
+      setPumpSeconds((current) => current + 1);
       setWaterToday((current) => Math.round((current + 9.1) * 10) / 10);
-      setMoisture((current) => Math.min(82, Math.round((current + 1.6) * 10) / 10));
-      if (elapsed >= 12) {
-        window.clearInterval(timer);
-        setPumpOn(false);
-        const now = new Date();
-        const completedAt = now.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
-        setLastWatered(completedAt);
-        setLogs((current) => [{ id: Date.now(), type: "water", title: "Manual watering completed", detail: "Pump ran for 12 seconds", water: "109 mL", time: completedAt, date: "Today" }, ...current]);
-      }
+      setMoisture((current) => Math.min(90, Math.round((current + 3.2) * 10) / 10));
     }, 1000);
     return () => window.clearInterval(timer);
   }, [pumpOn]);
 
+  useEffect(() => {
+    if (!pumpOn || pumpSeconds < 1) return;
+    const automaticTargetReached = pumpMode === "automatic" && moisture >= threshold + 10;
+    const manualCycleComplete = pumpMode === "manual" && pumpSeconds >= 12;
+    if (automaticTargetReached || manualCycleComplete) finishWatering(pumpSeconds, pumpMode);
+  }, [moisture, pumpMode, pumpOn, pumpSeconds, threshold]);
+
   function togglePump() {
-    if (pumpOn) return setPumpOn(false);
+    if (pumpOn && pumpMode === "manual") return finishWatering(pumpSeconds, "manual");
+    if (pumpOn) return;
     setPumpSeconds(0);
+    setPumpMode("manual");
     setPumpOn(true);
   }
 
@@ -100,7 +127,7 @@ export default function App() {
         <header className="topbar">
           <button className="menu-button" onClick={() => setMenuOpen(true)} aria-label="Open navigation"><Menu size={22} /></button>
           <div className="plant-picker"><span className="plant-avatar"><Leaf size={18} /></span><div><small>Monitoring</small><strong>Living Room Monstera</strong></div><ChevronDown size={17} /></div>
-          <div className="top-actions"><span className="sync-status"><Cloud size={16} /> Sensor online</span><button className="icon-button" aria-label="Notifications"><Bell size={19} /><i /></button><div className="profile">FE</div></div>
+          <div className="top-actions"><span className="sync-status"><Cloud size={16} /> Sensor online</span></div>
         </header>
 
         <div className="page" id="overview">
@@ -113,20 +140,30 @@ export default function App() {
             </article>
 
             <article className={`panel pump-panel ${pumpOn ? "running" : ""}`}>
-              <div className="panel-heading"><div><p className="eyebrow">PUMP CONTROL</p><h2>{pumpOn ? "Watering now" : "Pump is idle"}</h2></div><span className={`pump-state ${pumpOn ? "on" : ""}`}>{pumpOn ? "ON" : "OFF"}</span></div>
+              <div className="panel-heading"><div><p className="eyebrow">PUMP CONTROL</p><h2>{pumpOn ? `${pumpMode === "automatic" ? "Automatic" : "Manual"} watering` : "Pump is idle"}</h2></div><span className={`pump-state ${pumpOn ? "on" : ""}`}>{pumpOn ? "ON" : "OFF"}</span></div>
               <div className="pump-visual"><span><Waves size={28} /></span><div className="pump-ripple one" /><div className="pump-ripple two" /></div>
               <div className="pump-meta"><div><span>Current cycle</span><strong>{pumpSeconds} sec</strong></div><div><span>Flow rate</span><strong>9.1 mL/s</strong></div></div>
-              <button className="water-button" onClick={togglePump}><Power size={18} /> {pumpOn ? "Stop watering" : "Water plant now"}</button><p className="button-note">Manual control · automatically stops after 12 seconds</p>
+              <button className="water-button" onClick={togglePump} disabled={pumpMode === "automatic"}><Power size={18} /> {pumpMode === "automatic" ? "Automatic cycle running" : pumpOn ? "Stop watering" : "Water plant now"}</button><p className="button-note">{pumpMode === "automatic" ? `Stops at ${threshold + 10}% moisture` : "Manual control · automatically stops after 12 seconds"}</p>
             </article>
           </section>
 
           <section className="stats-grid">
-            <StatCard icon={Droplets} label="Water used today" value={Math.round(waterToday)} unit=" mL" helper={`Across ${logs.filter((log) => log.type === "water" && log.date === "Today").length} watering cycles`} tone="blue" /><StatCard icon={Timer} label="Total pump runtime" value={35 + pumpSeconds} unit=" sec" helper="18 seconds last cycle" tone="amber" /><StatCard icon={Clock3} label="Last watered" value={lastWatered} unit="" helper="Most recent completed cycle" tone="green" /><StatCard icon={Leaf} label="Plant status" value={plantStatus} unit="" helper={`${Math.round(moisture - threshold)}% above threshold`} tone="violet" />
+            <StatCard icon={Droplets} label="Water used today" value={Math.round(waterToday)} unit=" mL" helper={`Across ${logs.filter((log) => log.type === "water" && log.date === "Today").length} watering cycles`} tone="blue" /><StatCard icon={Timer} label="Total pump runtime" value={35 + pumpSeconds} unit=" sec" helper="18 seconds last cycle" tone="amber" /><StatCard icon={Clock3} label="Last watered" value={lastWatered} unit="" helper="Most recent completed cycle" tone="green" /><StatCard icon={Leaf} label="Plant status" value={plantStatus} unit="" helper={`${thresholdGap}% ${moisture >= threshold ? "above" : "below"} threshold`} tone="violet" />
           </section>
 
           <section className="content-grid">
             <article className="panel trend-panel"><div className="panel-heading"><div><p className="eyebrow">LAST 24 HOURS</p><h2>Moisture trend</h2></div><div className="legend"><span><i className="moisture-key" /> Moisture</span><span><i className="water-key" /> Watered</span></div></div><MoistureChart threshold={threshold} /></article>
-            <article className="panel threshold-panel" id="threshold"><div className="panel-heading"><div><p className="eyebrow">AUTOMATION</p><h2>Watering threshold</h2></div><SlidersHorizontal size={20} /></div><p>Set the moisture level that automatically starts the pump.</p><div className="threshold-value"><strong>{threshold}%</strong><span>Current trigger</span></div><input type="range" min="25" max="65" value={threshold} onChange={(event) => setThreshold(Number(event.target.value))} aria-label="Automatic watering moisture threshold" /><div className="slider-labels"><span>25% drier</span><span>65% wetter</span></div><div className="automation-note"><span><Droplets size={17} /></span><p><strong>Automatic mode is active</strong>The pump will stop once the sensor returns to the healthy range.</p></div></article>
+            <article className="panel threshold-panel" id="threshold">
+              <div className="panel-heading"><div><p className="eyebrow">TEST MODE</p><h2>Simulation controls</h2></div><SlidersHorizontal size={20} /></div>
+              <p>Change the sensor reading to test the automatic watering response.</p>
+              <div className="control-label"><span>Simulated soil moisture</span><strong>{Math.round(moisture)}%</strong></div>
+              <input type="range" min="10" max="90" value={moisture} onChange={(event) => setMoisture(Number(event.target.value))} aria-label="Simulated soil moisture level" />
+              <div className="preset-buttons"><button type="button" onClick={() => setMoisture(30)}>Dry · 30%</button><button type="button" onClick={() => setMoisture(60)}>Normal · 60%</button><button type="button" onClick={() => setMoisture(85)}>Wet · 85%</button></div>
+              <div className="control-divider" />
+              <div className="control-label"><span>Automatic watering threshold</span><strong>{threshold}%</strong></div>
+              <input type="range" min="25" max="65" value={threshold} onChange={(event) => setThreshold(Number(event.target.value))} aria-label="Automatic watering moisture threshold" />
+              <div className="slider-labels"><span>25% drier</span><span>65% wetter</span></div>
+            </article>
           </section>
 
           <section className="panel activity-panel" id="activity">
