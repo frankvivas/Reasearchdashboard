@@ -1,0 +1,251 @@
+<style>
+  #plant-dashboard-options {
+    --pd-font: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-family: var(--pd-font);
+    color: light-dark(#17211b, #edf5ef);
+  }
+  #plant-dashboard-options * { box-sizing: border-box; }
+  #plant-dashboard-options .pd-stage { min-height: 690px; }
+  #plant-dashboard-options .pd-shell {
+    min-height: 650px;
+    overflow: hidden;
+    color: var(--ink);
+    background: var(--canvas);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: 0 18px 50px light-dark(rgba(22,53,36,.10), rgba(0,0,0,.30));
+  }
+  #plant-dashboard-options button { font: inherit; }
+  #plant-dashboard-options .pd-topbar {
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    min-height: 68px; padding: 14px 22px; border-bottom: 1px solid var(--line);
+  }
+  #plant-dashboard-options .pd-brand { display: flex; align-items: center; gap: 10px; font-weight: 500; }
+  #plant-dashboard-options .pd-brand-mark { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 11px; background: var(--accent-soft); color: var(--accent); }
+  #plant-dashboard-options .pd-actions { display: flex; align-items: center; gap: 10px; }
+  #plant-dashboard-options .pd-btn { min-height: 38px; padding: 8px 13px; border: 1px solid var(--line); border-radius: 10px; color: var(--ink); background: var(--surface); }
+  #plant-dashboard-options .pd-btn-primary { color: var(--accent-ink); background: var(--accent); border-color: transparent; }
+  #plant-dashboard-options .pd-content { padding: 22px; }
+  #plant-dashboard-options .pd-eyebrow { margin: 0 0 5px; color: var(--muted); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; }
+  #plant-dashboard-options h2 { margin: 0; font-size: 24px; font-weight: 500; line-height: 1.2; }
+  #plant-dashboard-options h3 { margin: 0; font-size: 14px; font-weight: 500; }
+  #plant-dashboard-options p { margin: 0; }
+  #plant-dashboard-options .pd-sub { margin-top: 6px; color: var(--muted); font-size: 13px; }
+  #plant-dashboard-options .pd-card { background: var(--surface); border: 1px solid var(--line); border-radius: calc(var(--radius) - 5px); padding: 17px; }
+  #plant-dashboard-options .pd-card-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 14px; }
+  #plant-dashboard-options .pd-status { display: inline-flex; align-items: center; gap: 7px; padding: 6px 9px; border-radius: 999px; background: var(--ok-soft); color: var(--ok); font-size: 12px; font-weight: 500; }
+  #plant-dashboard-options .pd-dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+  #plant-dashboard-options .pd-muted { color: var(--muted); font-size: 12px; }
+  #plant-dashboard-options .pd-value { font-size: 28px; line-height: 1; font-weight: 500; letter-spacing: -.03em; }
+  #plant-dashboard-options .pd-value small { font-size: 13px; color: var(--muted); letter-spacing: 0; }
+  #plant-dashboard-options .pd-track { height: 9px; margin-top: 14px; overflow: hidden; border-radius: 999px; background: var(--track); }
+  #plant-dashboard-options .pd-fill { height: 100%; width: 64%; border-radius: inherit; background: var(--accent); }
+  #plant-dashboard-options .pd-grid-4 { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 12px; margin-top: 18px; }
+  #plant-dashboard-options .pd-stat-label { color: var(--muted); font-size: 12px; margin-bottom: 12px; }
+  #plant-dashboard-options .pd-main-grid { display: grid; grid-template-columns: minmax(0,1.55fr) minmax(250px,.8fr); gap: 14px; margin-top: 14px; }
+  #plant-dashboard-options .pd-chart { width: 100%; height: 188px; display: block; }
+  #plant-dashboard-options .pd-chart-grid { stroke: var(--line); stroke-width: 1; }
+  #plant-dashboard-options .pd-chart-line { fill: none; stroke: var(--accent); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+  #plant-dashboard-options .pd-chart-area { fill: var(--accent-faint); }
+  #plant-dashboard-options .pd-axis { fill: var(--muted); font-size: 10px; }
+  #plant-dashboard-options .pd-log { display: grid; gap: 15px; }
+  #plant-dashboard-options .pd-log-row { display: grid; grid-template-columns: 28px 1fr auto; gap: 10px; align-items: start; }
+  #plant-dashboard-options .pd-log-icon { width: 28px; height: 28px; display: grid; place-items: center; border-radius: 9px; color: var(--accent); background: var(--accent-soft); }
+  #plant-dashboard-options .pd-log-title { font-size: 13px; font-weight: 500; }
+  #plant-dashboard-options .pd-log-meta { margin-top: 3px; color: var(--muted); font-size: 11px; }
+
+  #plant-dashboard-options .calm {
+    --canvas: light-dark(#f5f7f1, #101712); --surface: light-dark(#ffffff, #19221b); --ink: light-dark(#1e2b22, #eef5ef);
+    --muted: light-dark(#718075, #a8b6aa); --line: light-dark(#e2e8df, #2c382f); --accent: light-dark(#2f7d4b, #6bc987);
+    --accent-ink: light-dark(#ffffff, #102016); --accent-soft: light-dark(#e4f2e8, #213c29); --accent-faint: light-dark(#dcefe2, #1c3323);
+    --ok: light-dark(#287243, #76d394); --ok-soft: light-dark(#e5f3e9, #203b28); --track: light-dark(#e8ede6, #2a352d); --radius: 20px;
+  }
+  #plant-dashboard-options .calm .pd-hero { display: flex; align-items: end; justify-content: space-between; gap: 20px; }
+
+  #plant-dashboard-options .lab {
+    --canvas: light-dark(#f3f5f8, #0d1118); --surface: light-dark(#ffffff, #161c25); --ink: light-dark(#152033, #eef3fb);
+    --muted: light-dark(#69758a, #96a4ba); --line: light-dark(#dfe4eb, #293241); --accent: light-dark(#1769e0, #63a2ff);
+    --accent-ink: light-dark(#ffffff, #091426); --accent-soft: light-dark(#e4efff, #172b49); --accent-faint: light-dark(#dbeaff, #14243d);
+    --ok: light-dark(#087f5b, #5dd6ad); --ok-soft: light-dark(#def5ec, #15362c); --track: light-dark(#e8ecf2, #28303d); --radius: 10px;
+  }
+  #plant-dashboard-options .lab-layout { display: grid; grid-template-columns: 190px 1fr; min-height: 650px; }
+  #plant-dashboard-options .lab-side { padding: 20px 14px; border-right: 1px solid var(--line); background: var(--surface); }
+  #plant-dashboard-options .lab-side .pd-brand { padding: 0 8px 22px; }
+  #plant-dashboard-options .lab-nav { display: grid; gap: 5px; }
+  #plant-dashboard-options .lab-nav div { display: flex; gap: 10px; align-items: center; padding: 10px; border-radius: 8px; color: var(--muted); font-size: 13px; }
+  #plant-dashboard-options .lab-nav .active { color: var(--accent); background: var(--accent-soft); }
+  #plant-dashboard-options .lab .pd-content { padding: 20px; }
+  #plant-dashboard-options .lab .pd-topbar { padding: 12px 20px; }
+  #plant-dashboard-options .pd-alert { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 14px; margin-top: 16px; color: var(--accent); background: var(--accent-soft); border-radius: 8px; font-size: 13px; }
+  #plant-dashboard-options .pd-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  #plant-dashboard-options .pd-table th { color: var(--muted); font-weight: 400; text-align: left; }
+  #plant-dashboard-options .pd-table th, #plant-dashboard-options .pd-table td { padding: 11px 8px; border-bottom: 1px solid var(--line); }
+  #plant-dashboard-options .pd-table td:last-child, #plant-dashboard-options .pd-table th:last-child { text-align: right; }
+
+  #plant-dashboard-options .mobile {
+    --canvas: light-dark(#f6f3ec, #151412); --surface: light-dark(#fffdf8, #201e1a); --ink: light-dark(#30281c, #f6f0e6);
+    --muted: light-dark(#7d7466, #b6aa99); --line: light-dark(#e8e0d3, #3a352e); --accent: light-dark(#9b5d23, #e4a563);
+    --accent-ink: light-dark(#ffffff, #281708); --accent-soft: light-dark(#f5e8d7, #422c19); --accent-faint: light-dark(#f3e1cb, #3b2918);
+    --ok: light-dark(#47704b, #8fc393); --ok-soft: light-dark(#e7eee4, #263728); --track: light-dark(#eee7db, #38332c); --radius: 28px;
+  }
+  #plant-dashboard-options .mobile-stage { display: grid; place-items: center; min-height: 690px; padding: 20px; background: light-dark(#ebe7de, #0f0e0d); border-radius: 24px; }
+  #plant-dashboard-options .mobile .pd-shell { width: min(100%, 410px); min-height: 650px; }
+  #plant-dashboard-options .mobile .pd-topbar { border-bottom: 0; padding: 18px 18px 8px; }
+  #plant-dashboard-options .mobile .pd-content { padding: 12px 18px 18px; }
+  #plant-dashboard-options .mobile .pd-card { padding: 16px; }
+  #plant-dashboard-options .plant-orb { width: 144px; height: 144px; margin: 12px auto 18px; display: grid; place-items: center; border-radius: 50%; background: conic-gradient(var(--accent) 0 64%, var(--track) 64% 100%); position: relative; }
+  #plant-dashboard-options .plant-orb::after { content: ""; position: absolute; inset: 11px; border-radius: 50%; background: var(--surface); }
+  #plant-dashboard-options .orb-content { z-index: 1; text-align: center; }
+  #plant-dashboard-options .orb-content .pd-value { font-size: 36px; }
+  #plant-dashboard-options .mobile-split { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  #plant-dashboard-options .mobile .pd-log { gap: 12px; margin-top: 12px; }
+  #plant-dashboard-options .mobile-nav { display: grid; grid-template-columns: repeat(3,1fr); border-top: 1px solid var(--line); background: var(--surface); }
+  #plant-dashboard-options .mobile-nav div { padding: 11px 6px; text-align: center; color: var(--muted); font-size: 11px; }
+  #plant-dashboard-options .mobile-nav .active { color: var(--accent); }
+  #plant-dashboard-options .mobile-nav i { display: block; margin: 0 auto 4px; }
+
+  @media (max-width: 720px) {
+    #plant-dashboard-options .pd-stage { min-height: 850px; }
+    #plant-dashboard-options .pd-shell { min-height: 810px; }
+    #plant-dashboard-options .pd-grid-4 { grid-template-columns: 1fr 1fr; }
+    #plant-dashboard-options .pd-main-grid { grid-template-columns: 1fr; }
+    #plant-dashboard-options .pd-chart { height: 160px; }
+    #plant-dashboard-options .lab-layout { grid-template-columns: 1fr; min-height: 810px; }
+    #plant-dashboard-options .lab-side { padding: 12px; border-right: 0; border-bottom: 1px solid var(--line); }
+    #plant-dashboard-options .lab-side .pd-brand { padding: 0 4px 10px; }
+    #plant-dashboard-options .lab-nav { display: flex; overflow: hidden; }
+    #plant-dashboard-options .lab-nav div { padding: 8px; }
+    #plant-dashboard-options .lab-nav div:nth-child(n+4) { display: none; }
+    #plant-dashboard-options .mobile-stage { min-height: 850px; }
+    #plant-dashboard-options .mobile .pd-shell { min-height: auto; }
+  }
+</style>
+
+<div id="plant-dashboard-options" class="viz-carousel viz-dotted-background" aria-label="Automatic watering dashboard design options">
+  <section class="pd-stage calm" data-variant="Garden Calm" aria-label="Garden Calm dashboard">
+    <div class="pd-shell">
+      <header class="pd-topbar">
+        <div class="pd-brand"><span class="pd-brand-mark"><i data-lucide="sprout" aria-hidden="true"></i></span> PlantCare</div>
+        <div class="pd-actions"><span class="pd-status"><span class="pd-dot"></span>System online</span><button class="pd-btn" type="button">Settings</button></div>
+      </header>
+      <main class="pd-content">
+        <div class="pd-hero">
+          <div><p class="pd-eyebrow">Living room</p><h2>Monstera deliciosa</h2><p class="pd-sub">Last sensor update: just now</p></div>
+          <button class="pd-btn pd-btn-primary" type="button">Water now</button>
+        </div>
+        <div class="pd-grid-4">
+          <article class="pd-card"><p class="pd-stat-label">Soil moisture</p><div class="pd-value">64<small>%</small></div><div class="pd-track"><div class="pd-fill"></div></div></article>
+          <article class="pd-card"><p class="pd-stat-label">Plant status</p><div class="pd-value" style="font-size:22px">Healthy</div><p class="pd-sub">Within target range</p></article>
+          <article class="pd-card"><p class="pd-stat-label">Water used today</p><div class="pd-value">320<small> mL</small></div><p class="pd-sub">2 watering cycles</p></article>
+          <article class="pd-card"><p class="pd-stat-label">Pump</p><div class="pd-value" style="font-size:22px">Idle</div><p class="pd-sub">Last ran for 18 sec</p></article>
+        </div>
+        <div class="pd-main-grid">
+          <article class="pd-card">
+            <div class="pd-card-head"><div><h3>Moisture trend</h3><p class="pd-sub">Past 24 hours · target 45–75%</p></div><span class="pd-status"><span class="pd-dot"></span>Normal</span></div>
+            <svg class="pd-chart" viewBox="0 0 620 188" role="img" aria-label="Moisture fell overnight and rose after two watering cycles">
+              <line class="pd-chart-grid" x1="42" y1="34" x2="600" y2="34"/><line class="pd-chart-grid" x1="42" y1="88" x2="600" y2="88"/><line class="pd-chart-grid" x1="42" y1="142" x2="600" y2="142"/>
+              <path class="pd-chart-area" d="M42 52 C100 58 145 74 198 91 S270 128 306 131 C322 132 336 70 354 61 S445 84 478 104 C492 110 505 62 524 54 S571 62 600 66 L600 158 L42 158 Z"/>
+              <path class="pd-chart-line" d="M42 52 C100 58 145 74 198 91 S270 128 306 131 C322 132 336 70 354 61 S445 84 478 104 C492 110 505 62 524 54 S571 62 600 66"/>
+              <text class="pd-axis" x="42" y="178">12 AM</text><text class="pd-axis" x="185" y="178">6 AM</text><text class="pd-axis" x="320" y="178">12 PM</text><text class="pd-axis" x="470" y="178">6 PM</text><text class="pd-axis" x="570" y="178">Now</text>
+            </svg>
+          </article>
+          <article class="pd-card">
+            <div class="pd-card-head"><h3>Recent activity</h3><span class="pd-muted">Today</span></div>
+            <div class="pd-log">
+              <div class="pd-log-row"><span class="pd-log-icon"><i data-lucide="droplets" aria-hidden="true"></i></span><div><p class="pd-log-title">Automatic watering</p><p class="pd-log-meta">18 sec · est. 160 mL</p></div><span class="pd-muted">2:14 PM</span></div>
+              <div class="pd-log-row"><span class="pd-log-icon"><i data-lucide="check" aria-hidden="true"></i></span><div><p class="pd-log-title">Moisture restored</p><p class="pd-log-meta">Rose from 39% to 63%</p></div><span class="pd-muted">2:15 PM</span></div>
+              <div class="pd-log-row"><span class="pd-log-icon"><i data-lucide="droplets" aria-hidden="true"></i></span><div><p class="pd-log-title">Automatic watering</p><p class="pd-log-meta">17 sec · est. 160 mL</p></div><span class="pd-muted">7:42 AM</span></div>
+            </div>
+          </article>
+        </div>
+      </main>
+    </div>
+  </section>
+
+  <section class="pd-stage lab" data-variant="Control Lab" aria-label="Control Lab dashboard" hidden>
+    <div class="pd-shell lab-layout">
+      <aside class="lab-side">
+        <div class="pd-brand"><span class="pd-brand-mark"><i data-lucide="waves" aria-hidden="true"></i></span> AquaSense</div>
+        <nav class="lab-nav" aria-label="Dashboard navigation">
+          <div class="active"><i data-lucide="layout-dashboard" aria-hidden="true"></i> Overview</div><div><i data-lucide="activity" aria-hidden="true"></i> Live data</div><div><i data-lucide="history" aria-hidden="true"></i> Activity</div><div><i data-lucide="sliders-horizontal" aria-hidden="true"></i> Thresholds</div><div><i data-lucide="settings" aria-hidden="true"></i> Settings</div>
+        </nav>
+      </aside>
+      <div>
+        <header class="pd-topbar"><div><h3>Plant monitoring</h3><p class="pd-sub">ESP32-PLANT-01 · connected</p></div><div class="pd-actions"><span class="pd-status"><span class="pd-dot"></span>Live</span><button class="pd-btn pd-btn-primary" type="button">Run pump</button></div></header>
+        <main class="pd-content">
+          <h2>System overview</h2><p class="pd-sub">Technical monitoring and precise controls</p>
+          <div class="pd-alert"><span><strong>All readings nominal.</strong> Moisture is 19% above the watering threshold.</span><span>Updated 4 sec ago</span></div>
+          <div class="pd-grid-4">
+            <article class="pd-card"><p class="pd-stat-label">Moisture</p><div class="pd-value">64.2<small>%</small></div><p class="pd-sub">Threshold: 45%</p></article>
+            <article class="pd-card"><p class="pd-stat-label">Pump state</p><div class="pd-value" style="font-size:21px">OFF</div><p class="pd-sub">GPIO 26 · normal</p></article>
+            <article class="pd-card"><p class="pd-stat-label">Flow estimate</p><div class="pd-value">9.1<small> mL/s</small></div><p class="pd-sub">Calibrated rate</p></article>
+            <article class="pd-card"><p class="pd-stat-label">24h volume</p><div class="pd-value">320<small> mL</small></div><p class="pd-sub">Runtime: 35 sec</p></article>
+          </div>
+          <div class="pd-main-grid">
+            <article class="pd-card">
+              <div class="pd-card-head"><h3>Sensor telemetry</h3><span class="pd-muted">30-minute interval</span></div>
+              <svg class="pd-chart" viewBox="0 0 620 188" role="img" aria-label="Technical moisture sensor telemetry for the last 24 hours">
+                <line class="pd-chart-grid" x1="42" y1="34" x2="600" y2="34"/><line class="pd-chart-grid" x1="42" y1="88" x2="600" y2="88"/><line class="pd-chart-grid" x1="42" y1="142" x2="600" y2="142"/>
+                <path class="pd-chart-line" d="M42 50 L91 58 L140 66 L189 81 L238 98 L287 128 L306 130 L321 72 L370 66 L419 80 L468 105 L486 109 L502 60 L551 57 L600 65"/>
+                <text class="pd-axis" x="42" y="178">00:00</text><text class="pd-axis" x="185" y="178">06:00</text><text class="pd-axis" x="320" y="178">12:00</text><text class="pd-axis" x="470" y="178">18:00</text><text class="pd-axis" x="570" y="178">23:30</text>
+              </svg>
+            </article>
+            <article class="pd-card"><div class="pd-card-head"><h3>Cycle log</h3><span class="pd-muted">Latest</span></div><table class="pd-table"><thead><tr><th>Time</th><th>Duration</th><th>Water</th></tr></thead><tbody><tr><td>14:14</td><td>18 s</td><td>164 mL</td></tr><tr><td>07:42</td><td>17 s</td><td>155 mL</td></tr><tr><td>Yesterday</td><td>16 s</td><td>146 mL</td></tr><tr><td>Oct 15</td><td>19 s</td><td>173 mL</td></tr></tbody></table></article>
+          </div>
+        </main>
+      </div>
+    </div>
+  </section>
+
+  <section class="pd-stage mobile" data-variant="Pocket Plant" aria-label="Pocket Plant mobile-first dashboard" hidden>
+    <div class="mobile-stage">
+      <div class="pd-shell">
+        <header class="pd-topbar"><div class="pd-brand"><span class="pd-brand-mark"><i data-lucide="flower-2" aria-hidden="true"></i></span> My Plant</div><span class="pd-status"><span class="pd-dot"></span>Online</span></header>
+        <main class="pd-content">
+          <div><p class="pd-eyebrow">Monstera</p><h2>Good afternoon, Frank</h2><p class="pd-sub">Your plant is comfortable right now.</p></div>
+          <article class="pd-card" style="margin-top:16px; text-align:center">
+            <div class="plant-orb"><div class="orb-content"><div class="pd-value">64<small>%</small></div><p class="pd-muted">moisture</p></div></div>
+            <span class="pd-status"><span class="pd-dot"></span>Healthy range</span>
+            <p class="pd-sub">Automatic watering starts below 45%</p>
+          </article>
+          <div class="mobile-split" style="margin-top:10px">
+            <article class="pd-card"><p class="pd-stat-label">Water today</p><div class="pd-value">320<small> mL</small></div></article>
+            <article class="pd-card"><p class="pd-stat-label">Pump</p><div class="pd-value" style="font-size:21px">Resting</div></article>
+          </div>
+          <article class="pd-card" style="margin-top:10px">
+            <div class="pd-card-head"><h3>Today’s care</h3><span class="pd-muted">2 cycles</span></div>
+            <div class="pd-log">
+              <div class="pd-log-row"><span class="pd-log-icon"><i data-lucide="droplet" aria-hidden="true"></i></span><div><p class="pd-log-title">Watered automatically</p><p class="pd-log-meta">18 sec · about 160 mL</p></div><span class="pd-muted">2:14 PM</span></div>
+              <div class="pd-log-row"><span class="pd-log-icon"><i data-lucide="sun" aria-hidden="true"></i></span><div><p class="pd-log-title">Morning check complete</p><p class="pd-log-meta">Moisture returned to 62%</p></div><span class="pd-muted">7:43 AM</span></div>
+            </div>
+          </article>
+        </main>
+        <nav class="mobile-nav" aria-label="Mobile navigation"><div class="active"><i data-lucide="home" aria-hidden="true"></i>Home</div><div><i data-lucide="bar-chart-3" aria-hidden="true"></i>Trends</div><div><i data-lucide="settings" aria-hidden="true"></i>Settings</div></nav>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+  (() => {
+    const root = document.getElementById('plant-dashboard-options');
+    const states = [
+      { selector: '.calm .pd-shell', radius: 20, accent: '#2f7d4b' },
+      { selector: '.lab .pd-shell', radius: 10, accent: '#1769e0' },
+      { selector: '.mobile .pd-shell', radius: 28, accent: '#9b5d23' }
+    ];
+    states.forEach((state) => {
+      const target = root.querySelector(state.selector);
+      const render = () => {
+        target.style.setProperty('--radius', `${state.radius}px`);
+        target.style.setProperty('--accent', state.accent);
+      };
+      render();
+      if (globalThis.Tweak) {
+        const tweak = new Tweak({ container: target, onChange: render });
+        tweak.addSlider(state, 'radius', { label: 'Corner radius', min: 4, max: 32, unit: 'px', reference: '--radius' });
+        tweak.addColorPicker(state, 'accent', { label: 'Accent color', reference: '--accent' });
+      }
+    });
+  })();
+</script>
