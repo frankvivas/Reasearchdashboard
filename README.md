@@ -33,3 +33,11 @@ All default values (45% / 55%, 9.1 mL/s flow, 20 s max runtime, cooldowns) are *
 npm test        # control-logic unit tests (Node built-in test runner)
 npm run build
 ```
+
+## Mobile and desktop views
+
+The dashboard has two layouts that show the same data. A **Mobile | Desktop** switch is in the header of both.
+
+- **Mobile**: single column with a bottom tab bar (Monitor, Log, Calibrate, Simulate). On a computer it appears as a phone-width column.
+- **Desktop**: sidebar and wide grid. On a phone, choosing Desktop requests a 1280 px wide page (like "Request desktop site").
+- The first visit picks by screen width; afterwards the last choice is remembered on that device.

@@ -19,3 +19,40 @@ main{min-width:0}.topbar{height:76px;padding:0 clamp(22px,3vw,42px);border-botto
 .field-error{margin:12px 0 0;padding:8px 10px;border-radius:8px;background:#fbe9e2;color:#9a4a2a;font-size:10px}.threshold-panel>.field-note{margin:12px 0 0;color:#93a09a;font-size:9px}.threshold-panel>p:first-of-type{margin:12px 0 16px}
 .sim-panel{margin-top:16px;padding:22px}.sim-panel>p{margin:12px 0 0;color:var(--muted);font-size:11px;line-height:1.55}.sim-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:28px;margin-top:6px}.sim-grid input[type=range]{width:100%;accent-color:var(--green-2)}.toggle-list{display:grid;gap:10px;align-content:center}.toggle-row{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border:1px solid var(--line);border-radius:10px;cursor:pointer}.toggle-row input{margin-top:3px;accent-color:var(--green-2)}.toggle-row strong,.toggle-row small{display:block}.toggle-row strong{font-size:11px;font-weight:600}.toggle-row small{margin-top:2px;color:var(--muted);font-size:9px;line-height:1.45}
 @media(max-width:840px){.sim-grid{grid-template-columns:1fr;gap:18px}}
+
+/* ---------- Mobile / desktop view switch ---------- */
+.top-actions{gap:14px}
+.view-switch{display:inline-flex;padding:3px;border:1px solid var(--line);border-radius:10px;background:#f1f5f3}
+.view-switch button{display:flex;align-items:center;gap:5px;min-height:32px;padding:0 10px;border:0;border-radius:7px;background:transparent;color:#6a7c74;font-size:11px;cursor:pointer}
+.view-switch button[aria-pressed=true]{background:#fff;color:var(--green);font-weight:600;box-shadow:0 1px 3px #1029201f}
+@media(max-width:620px){.view-switch span{display:none}.view-switch button{min-width:40px;justify-content:center}}
+
+/* ---------- Mobile layout (phone). Also shown as a phone-width column on desktop browsers ---------- */
+html[data-view=mobile] body{background:#e6ece8}
+.mobile-shell{width:100%;max-width:430px;min-height:100vh;min-height:100dvh;margin:0 auto;display:flex;flex-direction:column;background:#f3f6f4;box-shadow:0 0 40px #10292018}
+.m-header{position:sticky;top:0;z-index:10;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:max(10px,env(safe-area-inset-top)) 14px 10px;border-bottom:1px solid var(--line);background:#fbfdfc}
+.m-header .plant-picker{min-width:0}.m-header .plant-picker>div{min-width:0}.m-header .plant-picker small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:9px}.m-header .plant-picker strong{font-size:13px}
+.m-body{flex:1;display:grid;gap:12px;align-content:start;padding:14px 14px 20px}
+.m-body>*{min-width:0}
+.m-tabs{position:sticky;bottom:0;z-index:10;display:grid;grid-template-columns:repeat(4,1fr);gap:4px;padding:6px 8px max(8px,env(safe-area-inset-bottom));border-top:1px solid var(--line);background:#fff}
+.m-tabs button{display:grid;justify-items:center;gap:3px;min-height:54px;padding:7px 2px;border:0;border-radius:11px;background:transparent;color:#7d8c85;font-size:10px;cursor:pointer}
+.m-tabs button[aria-current=page]{background:var(--green-soft);color:var(--green-2);font-weight:600}
+.m-mini{display:grid;grid-template-columns:1fr 1fr;gap:10px}.m-mini>div{padding:12px 14px;border:1px solid var(--line);border-radius:13px;background:#fff}.m-mini span,.m-mini strong{display:block}.m-mini span{color:var(--muted);font-size:10px}.m-mini strong{margin-top:4px;font:600 20px "Manrope",sans-serif}.m-mini strong.on{color:var(--green-2)}
+
+.mobile-shell .sim-banner{margin-bottom:0}.mobile-shell .sim-banner p{font-size:11px}
+.mobile-shell .moisture-panel{padding:18px}.mobile-shell .moisture-layout{grid-template-columns:1fr;gap:16px;min-height:0;padding-top:6px}.mobile-shell .moisture-detail{text-align:center}.mobile-shell .moisture-detail>p{margin-left:auto;margin-right:auto;font-size:12px}.mobile-shell .range-labels{text-align:left;font-size:10px}
+.mobile-shell .pump-panel{min-height:0;padding:18px}.mobile-shell .pump-visual{margin:14px auto 12px}.mobile-shell .pump-meta span{font-size:10px}.mobile-shell .pump-meta strong{font-size:13px}.mobile-shell .pump-note{font-size:11px}
+.mobile-shell .stats-grid{grid-template-columns:1fr 1fr;gap:10px;margin-top:0}.mobile-shell .stat-card{flex-direction:column;gap:9px;padding:13px}.mobile-shell .stat-copy>span{font-size:10px}.mobile-shell .stat-copy strong{font-size:16px}.mobile-shell .stat-copy p{white-space:normal;font-size:10px}
+.mobile-shell .trend-panel,.mobile-shell .threshold-panel,.mobile-shell .sim-panel,.mobile-shell .activity-panel{margin-top:0;padding:16px}
+.mobile-shell .legend{display:flex;flex-wrap:wrap;gap:4px 12px}
+.mobile-shell .chart-wrap svg{height:auto}
+.mobile-shell .eyebrow{font-size:9px}
+.mobile-shell .threshold-panel>p,.mobile-shell .sim-panel>p{font-size:12px}
+.mobile-shell .field>span{font-size:11px}.mobile-shell .field>div{padding:0 10px}.mobile-shell .field input{min-height:46px;font-size:16px}.mobile-shell .field em{font-size:11px}
+.mobile-shell .field-error{font-size:11px}.mobile-shell .threshold-panel>.field-note{font-size:10px}
+.mobile-shell .sim-grid{grid-template-columns:1fr;gap:16px}.mobile-shell .sim-grid input[type=range]{height:32px}
+.mobile-shell .control-label{font-size:11px}
+.mobile-shell .preset-buttons button{min-height:44px;font-size:11px}
+.mobile-shell .toggle-row{padding:13px}.mobile-shell .toggle-row input{width:20px;height:20px}.mobile-shell .toggle-row strong{font-size:12px}.mobile-shell .toggle-row small{font-size:10px}
+.mobile-shell .text-button{min-height:36px;font-size:11px}
+.mobile-shell .activity-head{display:none}.mobile-shell .activity-row{grid-template-columns:1fr auto;gap:6px 12px;padding:13px 4px;font-size:11px}.mobile-shell .activity-row>span{grid-column:1/2;padding-left:45px}.mobile-shell .activity-row>strong{grid-column:2;grid-row:1;font-size:11px}.mobile-shell .activity-row time{grid-column:2;grid-row:2}.mobile-shell .activity-icon strong{font-size:11px}.mobile-shell .activity-icon small{font-size:9px}
